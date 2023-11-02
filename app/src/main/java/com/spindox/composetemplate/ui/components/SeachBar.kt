@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,7 +41,15 @@ fun SearchBar(hintText: String, textToSearch: MutableState<String>, filteredList
         active = active,
         onActiveChange = { active = it },
         placeholder = { Text(hintText) },
-        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) }
+        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+        trailingIcon = {
+            if (textToSearch.value.isNotEmpty()) {
+                Icon(
+                    Icons.Default.Clear,
+                    contentDescription = null,
+                    modifier = Modifier.clickable { textToSearch.value = "" })
+            }
+        }
     ) {
         // Show the first 5 items from the filtered list
         if (textToSearch.value.isNotEmpty()) {
