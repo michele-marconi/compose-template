@@ -2,7 +2,6 @@ package com.spindox.composetemplate.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,8 +32,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -42,6 +41,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,6 +53,8 @@ import com.spindox.composetemplate.enums.ThemeAppearance
 import com.spindox.composetemplate.ui.components.AlertDialogWithImage
 import com.spindox.composetemplate.ui.components.ErrorItem
 import com.spindox.composetemplate.ui.components.LoadingIndicator
+import com.spindox.composetemplate.ui.components.SearchBar
+import java.util.regex.Pattern
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -135,14 +138,15 @@ private fun HomeScreenContent(
     val context = LocalContext.current
     val openDialog = remember { mutableStateOf(false) }
     val selectedBeer = remember { mutableStateOf<Beer?>(null) }
+    val textToSearch = rememberSaveable { mutableStateOf("") }
+
+    val filteredList = itemList.filter {
+        it.name?.contains(textToSearch.value, ignoreCase = true) ?: false
+    }
 
     AlertDialogWithImage(openDialog, selectedBeer)
 
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    Column(modifier = modifier) {
         /*VerticalSpacer(size = 16)
         Button(
             onClick = {
@@ -153,11 +157,19 @@ private fun HomeScreenContent(
         ) {
 
         }*/
+
+        SearchBar(
+            hintText = stringResource(R.string.search_a_beer_and_drink_it),
+            textToSearch = textToSearch,
+            filteredList = filteredList
+        )
+
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
-            contentPadding = PaddingValues(16.dp)
+            contentPadding = PaddingValues(8.dp)
         ) {
-            items(itemList) { item ->
+
+            items(filteredList) { item ->
                 Card(modifier = Modifier.padding(vertical = 8.dp)) {
                     Row(
                         modifier = Modifier
@@ -193,7 +205,7 @@ private fun HomeScreenContent(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "IBU - ${item.ibu.toString()}",
+                                text = stringResource(R.string.ibu, item.ibu.toString()),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Text(text = item.brewersTips ?: "", fontStyle = FontStyle.Italic)
