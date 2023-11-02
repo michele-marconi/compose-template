@@ -41,8 +41,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,19 +48,21 @@ import coil.compose.SubcomposeAsyncImage
 import com.spindox.composetemplate.R
 import com.spindox.composetemplate.data.entity.Beer
 import com.spindox.composetemplate.enums.ThemeAppearance
+import com.spindox.composetemplate.ui.ScreenUiState
 import com.spindox.composetemplate.ui.components.AlertDialogWithImage
 import com.spindox.composetemplate.ui.components.ErrorItem
 import com.spindox.composetemplate.ui.components.LoadingIndicator
 import com.spindox.composetemplate.ui.components.SearchBar
-import java.util.regex.Pattern
+import com.spindox.composetemplate.ui.navigation.TopLevelDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    uiState: HomeScreenUiState,
+    uiState: ScreenUiState,
     onNavigateClick: (source: String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val beers by viewModel.homeRepository.loadBeersFromDB().collectAsState(initial = emptyList())
 
     Scaffold(
@@ -103,13 +103,13 @@ fun HomeScreen(
                 .padding(innerPadding)
         ) {
             when (uiState) {
-                is HomeScreenUiState.Initial -> {}
+                is ScreenUiState.Initial -> {}
 
-                is HomeScreenUiState.Loading -> {
+                is ScreenUiState.Loading -> {
                     LoadingIndicator(modifier = Modifier.fillMaxSize())
                 }
 
-                is HomeScreenUiState.Success -> {
+                is ScreenUiState.Success -> {
                     HomeScreenContent(
                         modifier = Modifier.fillMaxSize(),
                         itemList = beers.sortedBy { it.name },
@@ -117,7 +117,7 @@ fun HomeScreen(
                     )
                 }
 
-                is HomeScreenUiState.Error -> {
+                is ScreenUiState.Error -> {
                     ErrorItem(
                         text = uiState.msg,
                         modifier = Modifier.fillMaxSize(),
@@ -135,7 +135,6 @@ private fun HomeScreenContent(
     itemList: List<Beer> = emptyList(),
     onNavigateClick: (source: String) -> Unit
 ) {
-    val context = LocalContext.current
     val openDialog = remember { mutableStateOf(false) }
     val selectedBeer = remember { mutableStateOf<Beer?>(null) }
     val textToSearch = rememberSaveable { mutableStateOf("") }
@@ -147,17 +146,6 @@ private fun HomeScreenContent(
     AlertDialogWithImage(openDialog, selectedBeer)
 
     Column(modifier = modifier) {
-        /*VerticalSpacer(size = 16)
-        Button(
-            onClick = {
-                onNavigateClick(
-                    context.getString(R.string.screen_name).format(TopLevelDestination.Home.title)
-                )
-            }
-        ) {
-
-        }*/
-
         SearchBar(
             hintText = stringResource(R.string.search_a_beer_and_drink_it),
             textToSearch = textToSearch,
@@ -170,7 +158,9 @@ private fun HomeScreenContent(
         ) {
 
             items(filteredList) { item ->
-                Card(modifier = Modifier.padding(vertical = 8.dp)) {
+                Card(modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .clickable { onNavigateClick(item.id.toString()) }) {
                     Row(
                         modifier = Modifier
                             .padding(8.dp)
