@@ -54,6 +54,7 @@ import com.spindox.composetemplate.ui.components.AlertDialogWithImage
 import com.spindox.composetemplate.ui.components.ErrorItem
 import com.spindox.composetemplate.ui.components.LoadingIndicator
 import com.spindox.composetemplate.ui.components.SearchBar
+import java.util.regex.Pattern
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,9 +139,9 @@ private fun HomeScreenContent(
     val openDialog = remember { mutableStateOf(false) }
     val selectedBeer = remember { mutableStateOf<Beer?>(null) }
     val textToSearch = rememberSaveable { mutableStateOf("") }
+
     val filteredList = itemList.filter {
-        it.name?.toLowerCase(Locale.current)
-            ?.contains(Regex(textToSearch.value.toLowerCase(Locale.current))) ?: false
+        it.name?.contains(textToSearch.value, ignoreCase = true) ?: false
     }
 
     AlertDialogWithImage(openDialog, selectedBeer)
