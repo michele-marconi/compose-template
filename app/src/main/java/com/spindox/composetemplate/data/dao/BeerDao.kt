@@ -13,4 +13,8 @@ interface BeerDao {
 
     @Query("SELECT * FROM Beers")
     fun getBeers(): Flow<List<Beer>>
+
+    @Query("SELECT * FROM Beers WHERE id = :id LIMIT 1")
+    fun getBeerFromId(id: String): Flow<Beer>
+
 }
