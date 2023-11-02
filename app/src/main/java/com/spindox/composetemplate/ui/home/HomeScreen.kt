@@ -158,7 +158,7 @@ private fun HomeScreenContent(
         }*/
 
         SearchBar(
-            hintText = "Search a beer and drink it! \uD83C\uDF7A",
+            hintText = stringResource(R.string.search_a_beer_and_drink_it),
             textToSearch = textToSearch,
             filteredList = filteredList
         )
@@ -204,7 +204,7 @@ private fun HomeScreenContent(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Text(
-                                text = "IBU - ${item.ibu.toString()}",
+                                text = stringResource(R.string.ibu, item.ibu.toString()),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                             Text(text = item.brewersTips ?: "", fontStyle = FontStyle.Italic)

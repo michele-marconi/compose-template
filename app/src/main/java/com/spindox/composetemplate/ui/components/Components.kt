@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -45,6 +46,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
+import com.spindox.composetemplate.R
 import com.spindox.composetemplate.data.entity.Beer
 import kotlinx.coroutines.delay
 
@@ -104,7 +106,7 @@ fun ErrorItem(
             Button(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 onClick = { clickAction.invoke() }) {
-                Text(text = "Retry")
+                Text(text = stringResource(R.string.retry))
             }
         }
     }
@@ -168,7 +170,7 @@ fun AlertDialogWithImage(
                     onClick = {
                         openDialog.value = false
                     }) {
-                    Text("Dismiss")
+                    Text(stringResource(R.string.dismiss))
                 }
             },
             dismissButton = {
@@ -176,7 +178,7 @@ fun AlertDialogWithImage(
                     onClick = {
                         visible = false
                     }) {
-                    Text("Animate")
+                    Text(stringResource(R.string.animate))
                 }
             }
         )
@@ -227,7 +229,7 @@ fun SearchBar(hintText: String, textToSearch: MutableState<String>, filteredList
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(16.dp),
-                    text = "No elements found",
+                    text = stringResource(R.string.no_elements_found),
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
