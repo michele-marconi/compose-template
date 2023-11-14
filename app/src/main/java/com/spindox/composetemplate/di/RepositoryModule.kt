@@ -1,5 +1,7 @@
 package com.spindox.composetemplate.di
 
+import com.spindox.composetemplate.repository.DetailRepository
+import com.spindox.composetemplate.repository.DetailRepositoryImpl
 import com.spindox.composetemplate.repository.HomeRepository
 import com.spindox.composetemplate.repository.HomeRepositoryImpl
 import dagger.Binds
@@ -12,4 +14,7 @@ import dagger.hilt.android.components.ViewModelComponent
 abstract class RepositoryModule {
     @Binds
     abstract fun bindHomeRepository(homeRepositoryImpl: HomeRepositoryImpl): HomeRepository
+
+    @Binds
+    abstract fun bindDetailRepository(detailRepositoryImpl: DetailRepositoryImpl): DetailRepository
 }

@@ -6,6 +6,7 @@ import com.spindox.composetemplate.api.Resource
 import com.spindox.composetemplate.data.datastore.DataStoreManager
 import com.spindox.composetemplate.enums.ThemeAppearance
 import com.spindox.composetemplate.repository.HomeRepository
+import com.spindox.composetemplate.ui.ScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +21,8 @@ class HomeViewModel @Inject constructor(
     val homeRepository: HomeRepository,
     private val dataStore: DataStoreManager
 ) : ViewModel() {
-    private val _response = MutableStateFlow<HomeScreenUiState>(HomeScreenUiState.Initial)
-    val response: StateFlow<HomeScreenUiState> = _response.asStateFlow()
+    private val _response = MutableStateFlow<ScreenUiState>(ScreenUiState.Initial)
+    val response: StateFlow<ScreenUiState> = _response.asStateFlow()
 
     init {
         loadData()
@@ -32,18 +33,18 @@ class HomeViewModel @Inject constructor(
     }
 
     fun loadData() = viewModelScope.launch(Dispatchers.IO) {
-        _response.value = HomeScreenUiState.Loading
+        _response.value = ScreenUiState.Loading
         when (val beersList = homeRepository.getBeersFromCloud()) {
             is Resource.Success -> {
                 beersList.data?.let { homeRepository.insertBeersToDB(it) }
-                _response.value = HomeScreenUiState.Success(msg = "yes")
+                _response.value = ScreenUiState.Success
             }
 
             is Resource.Error -> _response.value =
                 if (homeRepository.loadBeersFromDB().first().isNotEmpty())
-                    HomeScreenUiState.Success(msg = "yes")
+                    ScreenUiState.Success
                 else
-                    HomeScreenUiState.Error(msg = "Something went wrong")
+                    ScreenUiState.Error(msg = "Something went wrong")
         }
     }
 }
