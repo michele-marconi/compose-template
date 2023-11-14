@@ -11,10 +11,6 @@ It includes the following popular libraries:
 - [Coil](https://github.com/coil-kt/coil) - Image loading for Android backed by Kotlin Coroutines.
 - [DataStore](https://developer.android.com/topic/libraries/architecture/datastore?hl=it) - Jetpack DataStore is a data storage solution that allows you to store key-value pairs or typed objects with protocol buffers. DataStore uses Kotlin coroutines and Flow to store data asynchronously, consistently, and transactionally.
 
-## How to use
-To use this template, simply click on the **Use this template** button at the top (or fork the repository) and start building your app on top of it. 
-Make sure to update the package name and other app-specific details before building and deploying your app.
-
 ## Annotation Processing
 This project uses [Kotlin Symbol Processing (KSP)](https://kotlinlang.org/docs/ksp-overview.html) for annotation processing, which provides faster build times compared to [KAPT](https://kotlinlang.org/docs/kapt.html). ~~However, some dependencies (like Hilt) may not support KSP yet, which is why KAPT is still used~~.
 
