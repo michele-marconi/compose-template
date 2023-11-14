@@ -21,13 +21,9 @@ class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val beerId: String = savedStateHandle.get<String>(Constants.SOURCE)!!
-    private val _response = MutableStateFlow<ScreenUiState>(ScreenUiState.Initial)
-    val response: StateFlow<ScreenUiState> = _response.asStateFlow()
     var beerItem: Flow<Beer?> = loadBeerData(beerId)
 
     private fun loadBeerData(beerId: String) = flow {
-        _response.value = ScreenUiState.Loading
         emit(detailRepository.loadBeerDetailFromDB(beerId).first())
-        _response.value = ScreenUiState.Success(msg = "yes")
     }
 }

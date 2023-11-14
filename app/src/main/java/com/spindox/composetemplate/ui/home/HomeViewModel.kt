@@ -37,12 +37,12 @@ class HomeViewModel @Inject constructor(
         when (val beersList = homeRepository.getBeersFromCloud()) {
             is Resource.Success -> {
                 beersList.data?.let { homeRepository.insertBeersToDB(it) }
-                _response.value = ScreenUiState.Success(msg = "yes")
+                _response.value = ScreenUiState.Success
             }
 
             is Resource.Error -> _response.value =
                 if (homeRepository.loadBeersFromDB().first().isNotEmpty())
-                    ScreenUiState.Success(msg = "yes")
+                    ScreenUiState.Success
                 else
                     ScreenUiState.Error(msg = "Something went wrong")
         }

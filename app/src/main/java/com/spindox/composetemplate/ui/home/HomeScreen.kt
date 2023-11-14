@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,18 +53,33 @@ import com.spindox.composetemplate.ui.components.AlertDialogWithImage
 import com.spindox.composetemplate.ui.components.ErrorItem
 import com.spindox.composetemplate.ui.components.LoadingIndicator
 import com.spindox.composetemplate.ui.components.SearchBar
-import com.spindox.composetemplate.ui.navigation.TopLevelDestination
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     uiState: ScreenUiState,
     onNavigateClick: (source: String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
     val beers by viewModel.homeRepository.loadBeersFromDB().collectAsState(initial = emptyList())
 
+    HomeScreenUI(
+        uiState,
+        onNavigateClick,
+        beers,
+        themeAppearance = { viewModel.setThemeAppearance(it) },
+        loadData = { viewModel.loadData() }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreenUI(
+    uiState: ScreenUiState,
+    onNavigateClick: (source: String) -> Unit,
+    beers: List<Beer>,
+    themeAppearance: (ThemeAppearance) -> Unit,
+    loadData: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -89,7 +104,7 @@ fun HomeScreen(
                                 text = { Text(it.type) },
                                 onClick = {
                                     menuExpanded = false
-                                    viewModel.setThemeAppearance(it)
+                                    themeAppearance.invoke(it)
                                 })
                         }
                     }
@@ -121,7 +136,7 @@ fun HomeScreen(
                     ErrorItem(
                         text = uiState.msg,
                         modifier = Modifier.fillMaxSize(),
-                        clickAction = { viewModel.loadData() }
+                        clickAction = { loadData.invoke() }
                     )
                 }
             }
@@ -158,9 +173,12 @@ private fun HomeScreenContent(
         ) {
 
             items(filteredList) { item ->
-                Card(modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .clickable { onNavigateClick(item.id.toString()) }) {
+                Card(
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .clickable { onNavigateClick(item.id.toString()) },
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                ) {
                     Row(
                         modifier = Modifier
                             .padding(8.dp)
@@ -209,6 +227,30 @@ private fun HomeScreenContent(
 
 @Preview(showSystemUi = true)
 @Composable
-fun HomeScreenPreview() {
+fun HomeScreenPreviewSuccess() = HomeScreenUI(
+    uiState = ScreenUiState.Success,
+    onNavigateClick = {},
+    beers = emptyList(),
+    themeAppearance = {},
+    loadData = {}
+)
 
-}
+@Preview(showSystemUi = true)
+@Composable
+fun HomeScreenPreviewError() = HomeScreenUI(
+    uiState = ScreenUiState.Error("Something went wrong"),
+    onNavigateClick = {},
+    beers = emptyList(),
+    themeAppearance = {},
+    loadData = {}
+)
+
+@Preview(showSystemUi = true)
+@Composable
+fun HomeScreenPreviewLoading() = HomeScreenUI(
+    uiState = ScreenUiState.Loading,
+    onNavigateClick = {},
+    beers = emptyList(),
+    themeAppearance = {},
+    loadData = {}
+)

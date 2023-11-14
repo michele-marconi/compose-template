@@ -27,13 +27,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.spindox.composetemplate.R
 import com.spindox.composetemplate.data.entity.Beer
+import androidx.compose.material3.SearchBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(hintText: String, textToSearch: MutableState<String>, filteredList: List<Beer>) {
     var active by rememberSaveable { mutableStateOf(false) }
 
-    androidx.compose.material3.SearchBar(
+    SearchBar(
         modifier = Modifier.padding(8.dp),
         query = textToSearch.value,
         onQueryChange = { textToSearch.value = it },
